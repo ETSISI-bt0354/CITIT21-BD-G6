@@ -10,6 +10,7 @@ So good luck with that.
 - Ibai Burgos
 - Miguel Ángel Serrano
 - David Valecillos
+- José María García Galindo
 
 ### ¿Cómo acceder a la BBDD?
 Placeholder!
