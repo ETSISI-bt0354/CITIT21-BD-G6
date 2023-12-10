@@ -1,3 +1,31 @@
+# c) Resolver en SQL la consulta: “Obtener los nombres, en orden alfabético, de aque-
+# llos autores que perteneciendo a la “Universidad Politécnica de Madrid” han pu-
+# blicado algún artículo en el año 2020 o en el año 2021 ”.
+
+SELECT a.name
+FROM author a
+JOIN signs s ON a.author_id = s.author_id
+JOIN affiliation_author_rel aa ON a.author_id = aa.author_id
+JOIN affiliation af ON aa.affiliation_id = af.affiliation_id
+JOIN article ar ON s.article_DOI = ar.DOI
+WHERE af.affiliation_name = 'Universidad Politecnica de Madrid'
+  AND (YEAR(ar.publication_date) = 2020 OR YEAR(ar.publication_date) = 2021)
+ORDER BY a.name ASC;
+
+# d) Resolver en SQL la consulta: “Obtener los nombres, en orden alfabético, de aque-
+# llos autores que perteneciendo a la “Universidad Politécnica de Madrid” han pu-
+# blicado algún artículo en el año 2020 y tambien en el año 2021 ”.
+
+SELECT a.name
+FROM author a
+JOIN signs s ON a.author_id = s.author_id
+JOIN affiliation_author_rel aa ON a.author_id = aa.author_id
+JOIN affiliation af ON aa.affiliation_id = af.affiliation_id
+JOIN article ar ON s.article_DOI = ar.DOI
+WHERE af.affiliation_name = 'Universidad Politecnica de Madrid'
+  AND YEAR(ar.publication_date) IN (2020, 2021)
+ORDER BY a.name ASC;
+
 # g) Resolver en SQL la consulta: “Obtener el nombre de la revista y el total de ci-
 # tas (num citations) que hayan recibido sus artı́culos para aquella/s revista/s
 # que, perteneciendo al primer cuartil del factor de impacto (q1), tengan el mayor
