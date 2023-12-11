@@ -26,6 +26,33 @@ WHERE af.affiliation_name = 'Universidad Politecnica de Madrid'
   AND YEAR(ar.publication_date) IN (2020, 2021)
 ORDER BY a.name ASC;
 
+# e) Obtener el nombre de los autores y el nombre de la afiliaci´on
+# de aquellos autores que, perteneciendo a alguna entidad espa˜nola, 
+# no han publicado ning´un art´ıculo ni en 2020 ni en 2021, ordenados  
+# por afiliaci´on y dentro de cada entidad, por nombre de autor
+
+select a.name, af.affiliation_name
+from author a 
+join affiliation_author_rel afr on a.author_id = afr.author_id
+join affiliation af on afr.affiliation_id = af.affiliation_id
+where af.country_name = 'spain' and a.name not in (select name
+												from author a 
+												join signs s on a.author_id = s.author_id
+												join article ar on s.article_DOI = ar.DOI
+												where ar.publication_date between '2020-01-01' and '2021-12-31')
+group by a.name, af.affiliation_name;
+
+
+# f) Obtener el nombre de la revista, su issn y el total
+# de citas (num citations) de todos los art´ıculos publicados 
+# para cada una de ellas en aquellas revistas que est´an clasificadas 
+# dentro del primer cuartil de factor de impacto (q1)
+
+select j.journal_name, j.issn, a.num_citations
+from journal j
+join article a on j.journal_id = a.journal_id
+where j.JIF_Quartile = '1';
+
 # g) Resolver en SQL la consulta: “Obtener el nombre de la revista y el total de ci-
 # tas (num citations) que hayan recibido sus artı́culos para aquella/s revista/s
 # que, perteneciendo al primer cuartil del factor de impacto (q1), tengan el mayor
