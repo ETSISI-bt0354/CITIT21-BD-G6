@@ -15,6 +15,7 @@ CREATE TABLE investigation_area (
 
 CREATE TABLE journal (
     journal_id INT UNIQUE NOT NULL AUTO_INCREMENT,
+    journal_name VARCHAR(250) NOT NULL,
     issn INT UNIQUE NOT NULL,
     JIF INT NOT NULL,
     JIF_Quartile INT NOT NULL,
