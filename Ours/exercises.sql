@@ -2,145 +2,161 @@
 # llos autores que perteneciendo a la “Universidad Politécnica de Madrid” han pu-
 # blicado algún artículo en el año 2020 o en el año 2021 ”.
 
-SELECT a.name
-FROM author a
-JOIN signs s ON a.author_id = s.author_id
-JOIN affiliation_author_rel aa ON a.author_id = aa.author_id
-JOIN affiliation af ON aa.affiliation_id = af.affiliation_id
-JOIN article ar ON s.article_DOI = ar.DOI
-WHERE af.affiliation_name = 'Universidad Politecnica de Madrid'
-  AND (YEAR(ar.publication_date) = 2020 OR YEAR(ar.publication_date) = 2021)
-ORDER BY a.name ASC;
+SELECT author_name
+FROM author
+    JOIN author_article ON author.author_id = author_article.author_id
+    JOIN author_affiliation ON author.author_id = author_affiliation.author_id
+    JOIN affiliation ON author_affiliation.affiliation_id = affiliation.affiliation_id
+    JOIN article ON author_article.DOI = article.DOI
+WHERE affiliation.affiliation_name = 'Universidad Politecnica de Madrid'
+  AND (YEAR(article.publication_date) = 2020 OR YEAR(article.publication_date) = 2021)
+ORDER BY author.author_name ASC;
 
 # d) Resolver en SQL la consulta: “Obtener los nombres, en orden alfabético, de aque-
 # llos autores que perteneciendo a la “Universidad Politécnica de Madrid” han pu-
 # blicado algún artículo en el año 2020 y tambien en el año 2021 ”.
 
-SELECT a.name
-FROM author a
-JOIN signs s ON a.author_id = s.author_id
-JOIN affiliation_author_rel aa ON a.author_id = aa.author_id
-JOIN affiliation af ON aa.affiliation_id = af.affiliation_id
-JOIN article ar ON s.article_DOI = ar.DOI
-WHERE af.affiliation_name = 'Universidad Politecnica de Madrid'
-  AND YEAR(ar.publication_date) IN (2020, 2021)
-ORDER BY a.name ASC;
+SELECT author_name
+FROM author
+    JOIN author_article ON author.author_id = author_article.author_id
+    JOIN author_affiliation ON author.author_id = author_affiliation.author_id
+    JOIN affiliation ON author_affiliation.affiliation_id = affiliation.affiliation_id
+    JOIN article ON author_article.DOI = article.DOI
+WHERE affiliation.affiliation_name = 'Universidad Politecnica de Madrid'
+  AND YEAR(article.publication_date) = 2020
+  AND author.author_id IN (
+  SELECT author.author_id
+  FROM author
+      JOIN author_article ON author.author_id = author_article.author_id
+      JOIN author_affiliation ON author.author_id = author_affiliation.author_id
+      JOIN affiliation ON author_affiliation.affiliation_id = affiliation.affiliation_id
+      JOIN article ON author_article.DOI = article.DOI
+  WHERE affiliation.affiliation_name = 'Universidad Politecnica de Madrid'
+    AND YEAR(article.publication_date) = 2021
+  )
+ORDER BY author.author_name ASC;
 
-# e) Obtener el nombre de los autores y el nombre de la afiliaci´on
-# de aquellos autores que, perteneciendo a alguna entidad espa˜nola, 
-# no han publicado ning´un art´ıculo ni en 2020 ni en 2021, ordenados  
-# por afiliaci´on y dentro de cada entidad, por nombre de autor
+# e) Obtener el nombre de los autores y el nombre de la afiliación
+# de aquellos autores que, perteneciendo a alguna entidad española,
+# no han publicado ningún artículo ni en 2020 ni en 2021, ordenados
+# por afiliación y dentro de cada entidad, por nombre de autor
 
-select a.name, af.affiliation_name
-from author a 
-join affiliation_author_rel afr on a.author_id = afr.author_id
-join affiliation af on afr.affiliation_id = af.affiliation_id
-where af.country_name = 'spain' and a.name not in (select name
-												from author a 
-												join signs s on a.author_id = s.author_id
-												join article ar on s.article_DOI = ar.DOI
-												where ar.publication_date between '2020-01-01' and '2021-12-31')
-group by a.name, af.affiliation_name;
+SELECT affiliation_name, author.author_name
+FROM author
+JOIN author_affiliation ON author.author_id = author_affiliation.author_id
+JOIN affiliation ON author_affiliation.affiliation_id = affiliation.affiliation_id
+WHERE affiliation.country_name = 'spain'
+AND author.author_id NOT IN (SELECT author.author_id
+	FROM author
+	JOIN author_article ON author.author_id = author_article.author_id
+	JOIN article ON author_article.DOI = article.DOI
+	WHERE YEAR(article.publication_date) = 2021 OR YEAR(article.publication_date) = 2020)
+ORDER BY affiliation_name, author.author_name ASC;
 
 
 # f) Obtener el nombre de la revista, su issn y el total
-# de citas (num citations) de todos los art´ıculos publicados 
-# para cada una de ellas en aquellas revistas que est´an clasificadas 
-# dentro del primer cuartil de factor de impacto (q1)
+# de citas (num citations) de todos los artículos publicados
+# para cada una de ellas en aquellas revistas que están clasificadas
+# dentro del primer cuartil de factor de impacto (Q1)
 
-select j.journal_name, j.issn, a.num_citations
-from journal j
-join article a on j.journal_id = a.journal_id
-where j.JIF_Quartile = '1';
+SELECT journal_name, issn, SUM(article.num_citations) AS total_citations
+FROM journal
+JOIN article ON journal.journal_id = article.journal_id
+WHERE journal.JIF_Quartile = 'Q1'
+GROUP BY journal_name, issn;
 
 # g) Resolver en SQL la consulta: “Obtener el nombre de la revista y el total de ci-
-# tas (num citations) que hayan recibido sus artı́culos para aquella/s revista/s
-# que, perteneciendo al primer cuartil del factor de impacto (q1), tengan el mayor
+# tas (num citations) que hayan recibido sus artículos para aquella/s revista/s
+# que, perteneciendo al primer cuartil del factor de impacto (Q1), tengan el mayor
 # número de citas de toda la base de datos”.
 
-SELECT j.journal_name AS journal_name, SUM(a.num_citations) AS total_citations
-FROM journal j
-JOIN article a ON j.journal_id = a.journal_id
+SELECT journal_name, SUM(article.num_citations) AS total_citations
+FROM journal
+JOIN article ON journal.journal_id = article.journal_id
 WHERE JIF_Quartile = 'Q1'
-GROUP BY j.journal_name
-ORDER BY total_citations DESC;
+GROUP BY journal.journal_name
+HAVING total_citations >= ALL (
+    SELECT SUM(article.num_citations)
+    FROM journal
+    JOIN article ON journal.journal_id = article.journal_id
+    GROUP BY journal.journal_id
+);
 
 # h) Resolver en SQL la consulta: “Obtener aquellas entidades (affiliation name)
 # que tienen asociados al menos 10 autores que hayan publicado más de 5 artı́culos
 # en el año más reciente que figuren en la base de datos (este año debe calcularse
 # de forma dinámica con la consulta)”.
 
-SELECT a.affiliation_name
-FROM affiliation a
-WHERE a.affiliation_id IN (
-    SELECT aa.affiliation_id
-    FROM author_affiliation aa
-    WHERE aa.author_id IN (
-        SELECT aa.author_id
-        FROM author_article aa
-        JOIN `bd-citit21-g6`.author a2 on a2.author_id = aa.author_id
-        JOIN `bd-citit21-g6`.author_affiliation aa2 on a2.author_id = aa2.author_id
-        JOIN `bd-citit21-g6`.article a3 on aa.DOI = a3.DOI
-        WHERE YEAR(a3.publication_date) = (
-            SELECT MAX(YEAR(a3.publication_date))
-            FROM article a3
+SELECT affiliation_name
+FROM affiliation
+WHERE affiliation.affiliation_id IN (
+    SELECT affiliation_id
+    FROM author_affiliation
+    WHERE author_affiliation.author_id IN (
+        SELECT author_article.author_id
+        FROM author_article
+        JOIN article on author_article.DOI = article.DOI
+        WHERE YEAR(article.publication_date) = (
+            SELECT MAX(YEAR(article.publication_date))
+            FROM article
         )
+        GROUP BY author_article.author_id
+        HAVING COUNT(*) >= 5
     )
-    GROUP BY aa.affiliation_id
-    HAVING COUNT(aa.author_id) >= 10
+    GROUP BY author_affiliation.affiliation_id
+    HAVING COUNT(*) >= 10
 );
 
 # i) Resolver en SQL la consulta: “Obtener el nombre de aquellas revistas que, ha-
-# biendo publicado m´as de 300 art´ıculos en el a˜no de mayor antig¨uedad que figure
-# en la base de datos tengan un factor de impacto (jif) superior a la media de
-# los factores de impacto del global de las revistas de la base de datos. El a˜no debe
-# calcularse de forma din´amica con la consulta”.
+# biendo publicado más de 300 artículos en el año de mayor antigüedad que figure
+# en la base de datos tengan un factor de impacto (JIF) superior a la media de
+# los factores de impacto del global de las revistas de la base de datos. El año debe
+# calcularse de forma dinámica con la consulta”.
 
-SELECT j.journal_name
-FROM journal j
-JOIN article a on j.journal_id = a.journal_id
-WHERE YEAR(a.publication_date) = (
-    SELECT MIN(YEAR(a.publication_date))
-    FROM article a
-)
-GROUP BY a.journal_id, j.JIF
-HAVING COUNT(a.DOI) > 300
-AND j.JIF > (
-    SELECT AVG(j2.JIF)
-    FROM journal j2
-);
-# j ) Resolver en SQL la consulta: “Obtener el nombre de aquellas revistas que hayan
-# recibido en el global de sus art´ıculos un mayor n´umero de citas que la media de
-# las citas recibidas por cada revista para el global de sus art´ıculos de la base de
+SELECT journal.journal_name
+FROM journal
+JOIN article on journal.journal_id = article.journal_id
+WHERE journal.JIF > (
+    SELECT AVG(journal.JIF)
+    FROM journal )
+AND YEAR(article.publication_date) = (
+    SELECT MIN(YEAR(article.publication_date))
+    FROM article )
+GROUP BY article.journal_id, journal.journal_name
+HAVING COUNT(article.DOI) > 300;
+
+# j) Resolver en SQL la consulta: “Obtener el nombre de aquellas revistas que hayan
+# recibido en el global de sus artículos un mayor número de citas que la media de
+# las citas recibidas por cada revista para el global de sus artículos de la base de
 # datos”.
 
-SELECT j.journal_name
-FROM journal j
-JOIN article a on j.journal_id = a.journal_id
-GROUP BY a.journal_id
-HAVING SUM(a.num_citations) > (
+SELECT journal_name
+FROM journal
+JOIN article on journal.journal_id = article.journal_id
+GROUP BY article.journal_id
+HAVING SUM(article.num_citations) > (
     SELECT AVG(globalCitations)
     FROM (
-        SELECT SUM(a.num_citations) as globalCitations
-        FROM article a
-        GROUP BY a.journal_id
+        SELECT SUM(article.num_citations) as globalCitations
+        FROM article
+        GROUP BY article.journal_id
     ) AS avg_citations
 );
 
-# k ) Resolver en SQL la consulta: “Obtener el nombre de aquellos autores que hayan
-# publicado art´ıculos en todos los diferentes a˜nos que figuren en la base de datos”.
+# k) Resolver en SQL la consulta: “Obtener el nombre de aquellos autores que hayan
+# publicado artículos en todos los diferentes años que figuren en la base de datos”.
 
-SELECT a.author_name
-FROM author a
-JOIN author_article aa ON a.author_id = aa.author_id
-JOIN article ar ON aa.DOI = ar.DOI
-GROUP BY a.author_id
-HAVING COUNT(DISTINCT YEAR(ar.publication_date)) = (
-    SELECT COUNT(DISTINCT YEAR(ar2.publication_date))
-    FROM article ar2
+SELECT author_name
+FROM author
+JOIN author_article ON author.author_id = author_article.author_id
+JOIN article ON author_article.DOI = article.DOI
+GROUP BY author.author_id
+HAVING COUNT(DISTINCT YEAR(article.publication_date)) = (
+    SELECT COUNT(DISTINCT YEAR(article.publication_date))
+    FROM article
 );
 
-# l ) Crear un procedimiento que, recibiendo un año como parámetro, devuelva, en
+# l) Crear un procedimiento que, recibiendo un año como parámetro, devuelva, en
 # dos parámetros de salida, el nombre de la revista y el número de autores para
 # aquella revista que haya publicado en dicho año el artı́culo con un mayor número
 # de autores. Si existen varias revistas con el máximo de autores, habrá que propor-
