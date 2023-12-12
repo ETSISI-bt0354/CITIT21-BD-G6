@@ -90,6 +90,56 @@ WHERE a.affiliation_id IN (
     HAVING COUNT(aa.author_id) >= 10
 );
 
+# i) Resolver en SQL la consulta: “Obtener el nombre de aquellas revistas que, ha-
+# biendo publicado m´as de 300 art´ıculos en el a˜no de mayor antig¨uedad que figure
+# en la base de datos tengan un factor de impacto (jif) superior a la media de
+# los factores de impacto del global de las revistas de la base de datos. El a˜no debe
+# calcularse de forma din´amica con la consulta”.
+
+SELECT j.journal_name
+FROM journal j
+JOIN article a on j.journal_id = a.journal_id
+WHERE YEAR(a.publication_date) = (
+    SELECT MIN(YEAR(a.publication_date))
+    FROM article a
+)
+GROUP BY a.journal_id, j.JIF
+HAVING COUNT(a.DOI) > 300
+AND j.JIF > (
+    SELECT AVG(j2.JIF)
+    FROM journal j2
+);
+# j ) Resolver en SQL la consulta: “Obtener el nombre de aquellas revistas que hayan
+# recibido en el global de sus art´ıculos un mayor n´umero de citas que la media de
+# las citas recibidas por cada revista para el global de sus art´ıculos de la base de
+# datos”.
+
+SELECT j.journal_name
+FROM journal j
+JOIN article a on j.journal_id = a.journal_id
+GROUP BY a.journal_id
+HAVING SUM(a.num_citations) > (
+    SELECT AVG(globalCitations)
+    FROM (
+        SELECT SUM(a.num_citations) as globalCitations
+        FROM article a
+        GROUP BY a.journal_id
+    ) AS avg_citations
+);
+
+# k ) Resolver en SQL la consulta: “Obtener el nombre de aquellos autores que hayan
+# publicado art´ıculos en todos los diferentes a˜nos que figuren en la base de datos”.
+
+SELECT a.author_name
+FROM author a
+JOIN author_article aa ON a.author_id = aa.author_id
+JOIN article ar ON aa.DOI = ar.DOI
+GROUP BY a.author_id
+HAVING COUNT(DISTINCT YEAR(ar.publication_date)) = (
+    SELECT COUNT(DISTINCT YEAR(ar2.publication_date))
+    FROM article ar2
+);
+
 # l ) Crear un procedimiento que, recibiendo un año como parámetro, devuelva, en
 # dos parámetros de salida, el nombre de la revista y el número de autores para
 # aquella revista que haya publicado en dicho año el artı́culo con un mayor número
