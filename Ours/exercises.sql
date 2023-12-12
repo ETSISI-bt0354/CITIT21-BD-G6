@@ -171,15 +171,15 @@ BEGIN
 	DECLARE done INT DEFAULT FALSE;
     DECLARE one_article INT DEFAULT TRUE;
     DECLARE title VARCHAR(240);
-    DECLARE cur CURSOR FOR SELECT article.title, COUNT(author_id) as num_auth
-							FROM article 
-							JOIN author_article ON author_article.DOI = article.DOI
-                            WHERE year(publication_date) = search_year
-                            GROUP BY title, author_article.DOI
-                            HAVING num_auth >= all(SELECT count(*) 
-											FROM author_article 
-                                            WHERE author_article.DOI IN (SELECT article.DOI FROM article WHERE year(article.publication_date) = search_year)
-                                            GROUP BY DOI);
+    DECLARE cur CURSOR FOR SELECT article.title, COUNT(author_id) as num
+		                   FROM article
+		                   JOIN author_article ON author_article.DOI = article.DOI
+                           WHERE year(publication_date) = search_year
+                           GROUP BY title, author_article.DOI
+                           HAVING num >= all(SELECT count(*)
+		                   FROM author_article
+                                   WHERE author_article.DOI IN (SELECT article.DOI FROM article WHERE year(article.publication_date) = search_year)
+                                   GROUP BY DOI);
                             
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
     OPEN cur;
@@ -212,7 +212,6 @@ BEGIN
     DECLARE done INT DEFAULT FALSE;
     DECLARE article_date, min_date DATE;
     DECLARE num_articles INT DEFAULT 0;
-    DECLARE ratio DECIMAL(10, 2);
     DECLARE cur CURSOR FOR SELECT publication_date FROM article where journal_id = id;
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
     OPEN cur;
@@ -231,7 +230,7 @@ BEGIN
     END LOOP;
     CLOSE cur;
 
-    RETURN num_articles / (YEAR(CURDATE()) - YEAR(min_date) + 1); # +1 por división por cero. Si solo has publicado 2 artículos en elaño actual, serían 2 / 1 año
+    RETURN num_articles / (YEAR(CURDATE()) - YEAR(min_date) + 1); # +1 por división por cero. Si solo has publicado 2 artículos en el año actual, serían 2 / 1 año
 
 END $$
 DELIMITER ;
