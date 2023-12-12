@@ -90,35 +90,122 @@ WHERE a.affiliation_id IN (
     HAVING COUNT(aa.author_id) >= 10
 );
 
+# l ) Crear un procedimiento que, recibiendo un año como parámetro, devuelva, en
+# dos parámetros de salida, el nombre de la revista y el número de autores para
+# aquella revista que haya publicado en dicho año el artı́culo con un mayor número
+# de autores. Si existen varias revistas con el máximo de autores, habrá que propor-
+# cionar como resultado una cadena que contenga, separados por puntos y comas,
+# los nombres de dichas revistas (en un parámetro de salida solamente puede de-
+# volverse un valor). Se deberá usar obligatoriamente, al menos, un cursor en la
+# resolución del procedimiento.
+
+DELIMITER $$
+CREATE PROCEDURE article_max_author (IN search_year INT, OUT article_name VARCHAR(722), OUT num_author INT)
+BEGIN
+	DECLARE done INT DEFAULT FALSE;
+    DECLARE one_article INT DEFAULT TRUE;
+    DECLARE title VARCHAR(240);
+    DECLARE cur CURSOR FOR SELECT article.title, COUNT(author_id) as num_auth
+							FROM article 
+							JOIN author_article ON author_article.DOI = article.DOI
+                            WHERE year(publication_date) = search_year
+                            GROUP BY title, author_article.DOI
+                            HAVING num_auth >= all(SELECT count(*) 
+											FROM author_article 
+                                            WHERE author_article.DOI IN (SELECT article.DOI FROM article WHERE year(article.publication_date) = search_year)
+                                            GROUP BY DOI);
+                            
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    OPEN cur;
+    read_loop: LOOP
+		FETCH cur INTO title, num_author;
+        IF done THEN
+			LEAVE read_loop;
+		END IF;
+        
+        IF one_article THEN
+			SET article_name = title;
+            SET one_article = FALSE;
+		ELSE
+			SET article_name = CONCAT(article_name, ';', title);
+		END IF;
+	END LOOP;
+    CLOSE cur;
+END$$
+DELIMITER ;
+
 # m) Crear una función que, recibiendo como parámetro un identificador de una revista
 # devuelva el número medio de artı́culos por año que dicha revista ha publicado.
 # Escribir el código necesario para poder probarlo.
 
 DELIMITER $$
-CREATE FUNCTION average_article_per_year(id INT)
-    RETURNS DECIMAL(10,2)
+CREATE FUNCTION journal_average_article_per_year(id BIGINT)
+    RETURNS DECIMAL(10, 4)
     DETERMINISTIC
 BEGIN
     DECLARE done INT DEFAULT FALSE;
-    DECLARE date, min_date DATE;
+    DECLARE article_date, min_date DATE;
     DECLARE num_articles INT DEFAULT 0;
+    DECLARE ratio DECIMAL(10, 2);
     DECLARE cur CURSOR FOR SELECT publication_date FROM article where journal_id = id;
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
     OPEN cur;
     read_loop: LOOP
-        FETCH cur INTO date;
-        IF date < min_date THEN
-            SET min_date = date;
-        END IF;
-        SET num_articles = num_articles + 1;
-
+        FETCH cur INTO article_date;
         IF done THEN
             LEAVE read_loop;
         END IF;
+        
+        IF min_date IS NULL OR article_date < min_date THEN
+            SET min_date = article_date;
+        END IF;
+        
+        SET num_articles = num_articles + 1;
+        
     END LOOP;
     CLOSE cur;
 
-    RETURN num_articles / (YEAR(CURDATE()) - YEAR(min_date) + 1);
+    RETURN num_articles / (YEAR(CURDATE()) - YEAR(min_date) + 1); # +1 por división por cero. Si solo has publicado 2 artículos en elaño actual, serían 2 / 1 año
 
 END $$
 DELIMITER ;
+
+SELECT distinct journal_id, journal_average_article_per_year(journal_id) from journal;
+
+# n) Crear la tabla correspondiente a la asignación y realización de las revisiones de los
+# artı́culos por parte de los autores (que actúan como revisores) que se ha obtenido
+# en el análisis inicial. Una vez creada, crear un trigger que impida que se pueda
+# insertar a un revisor de un artı́culo si dicho revisor figura ya como autor del
+# mismo. Probar su funcionamiento con el código necesario.
+
+CREATE TABLE reviews (
+    sent_date   DATE        NOT NULL,
+    result      ENUM ('Positive', 'Negative') DEFAULT NULL,
+    review_date DATE		DEFAULT NULL,
+    DOI         VARCHAR(50) NOT NULL,
+    author_id   BIGINT         NOT NULL,
+    PRIMARY KEY (DOI, author_id),
+    CONSTRAINT
+        FOREIGN KEY (DOI) REFERENCES article (DOI),
+    CONSTRAINT
+        FOREIGN KEY (author_id) REFERENCES author (author_id)
+);
+DROP TRIGGER author_does_not_review;
+DELIMITER $$
+CREATE TRIGGER author_does_not_review BEFORE INSERT ON reviews
+FOR EACH ROW
+BEGIN
+	IF EXISTS(SELECT * FROM author_article WHERE author_article.DOI = NEW.DOI AND author_article.author_id = NEW.author_id) THEN
+		SIGNAL SQLSTATE '02000'
+        SET MESSAGE_TEXT = 'Error: EL autor no puede ser revisor de su artículo';
+	END IF;
+END $$
+DELIMITER ;
+
+# No falla
+INSERT INTO reviews (DOI, author_id, sent_date) VALUES ('10.1080/0144929X.2016.1159249', 6503848058, '2020/05/04');
+
+# Falla
+INSERT INTO reviews (DOI, author_id, sent_date) VALUES ('10.1080/0144929X.2016.1159249', 36818108400, '2020/05/04');
+
+SELECT * FROM reviews;
