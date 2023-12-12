@@ -69,11 +69,11 @@ CREATE TABLE signs (
 );
 
 CREATE TABLE reviews (
-    sent_date   DATE        NOT NULL,
-    result      ENUM ('Positive', 'Negative'),
-    review_date DATE,
+    sent_date   DATE NOT NULL,
+    result      ENUM ('Positive', 'Negative') DEFAULT NULL,
+    review_date DATE DEFAULT NULL,
     DOI         VARCHAR(50) NOT NULL,
-    author_id   INT         NOT NULL,
+    author_id   INT NOT NULL,
     PRIMARY KEY (DOI, author_id),
     CONSTRAINT
         FOREIGN KEY (DOI) REFERENCES article (DOI),
