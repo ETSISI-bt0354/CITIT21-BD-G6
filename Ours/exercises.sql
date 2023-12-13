@@ -172,7 +172,7 @@ BEGIN
 	DECLARE done INT DEFAULT FALSE;
     DECLARE one_article INT DEFAULT TRUE;
     DECLARE title VARCHAR(240);
-    DECLARE cur CURSOR FOR SELECT article.title, COUNT(author_id) as num
+    DECLARE cur CURSOR FOR SELECT article.title, COUNT(author_id) AS num
 		                   FROM article
 		                   JOIN author_article ON author_article.DOI = article.DOI
                            WHERE year(publication_date) = search_year
