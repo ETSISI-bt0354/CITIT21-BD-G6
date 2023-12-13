@@ -13,7 +13,13 @@ public class Main {
         }
         Connection conn = null;
         try{
-            conn = DriverManager.getConnection("jdbc:mysql://contabo:6033", "bd-citit21-g6", "le_cwoissant69");
+            conn = DriverManager.getConnection("jdbc:mysql://contabo:6033/bd-citit21-g6", "bd-citit21-g6", "le_cwoissant69");
+            // nuevoAutor("Burgos I.", conn);
+            // nuevoAutor("Serrano M.", conn);
+            // nuevoAutor("Benjumea J.", conn);
+            // listaArticulosPorAutor("Ortega F.", 2021, conn).stream().forEach(System.out::println);
+            listaAfiliaciones(conn).stream().forEach(System.out::println);
+            conn.close();
         } catch (Exception ex) {
             System.out.println("Uh oh, something that I don't know happened!");
             ex.printStackTrace();
