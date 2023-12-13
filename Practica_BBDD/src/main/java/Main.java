@@ -44,4 +44,30 @@ public class Main {
             throw new RuntimeException(e);
         }
     }
+
+    private static List<String> listaArticulosPorAutor(String authorName, int year, Connection conn) {
+        List<String> result = new ArrayList<>();
+        try {
+            PreparedStatement stmt = conn.prepareStatement("""
+            SELECT title, publication_date FROM article
+            JOIN author_article ON article.DOI = author_article.DOI
+            JOIN author ON author_article.author_id = author.author_id 
+            WHERE author_name = ? AND YEAR(publication_date) = ?
+            """);
+            stmt.setString(1, authorName);
+            stmt.setInt(2, year);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                String title = rs.getString(1);
+                Date date = rs.getDate(2);
+                result.add(title + " - " + date.toString());
+            }
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println("Authoooooor is goneeeeeee");
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
 }
