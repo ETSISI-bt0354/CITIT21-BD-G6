@@ -74,8 +74,9 @@ public class Main_Plantilla {
     private static void listaAfiliaciones(Connection conn) throws SQLException {
         List<String> result = new ArrayList<>();
         PreparedStatement stmt = conn.prepareStatement("""
-            SELECT affiliation_name, COUNT(author_affiliation.author_id) AS num_authors FROM affiliation JOIN author_affiliation 
-            ON affiliation.affiliation_id = author_affiliation.affiliation_id GROUP BY affiliation_name ORDER BY num_authors DESC
+            SELECT affiliation_name, COUNT(author_affiliation.author_id) AS num_authors FROM affiliation 
+            JOIN author_affiliation ON affiliation.affiliation_id = author_affiliation.affiliation_id 
+            GROUP BY affiliation_name ORDER BY num_authors DESC
             """);
         ResultSet rs = stmt.executeQuery();
         while(rs.next()){
