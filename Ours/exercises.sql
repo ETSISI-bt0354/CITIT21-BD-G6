@@ -79,6 +79,7 @@ HAVING total_citations >= ALL (
     SELECT SUM(article.num_citations)
     FROM journal
     JOIN article ON journal.journal_id = article.journal_id
+    WHERE JIF_Quartile = 'Q1'
     GROUP BY journal.journal_id
 );
 
