@@ -4,8 +4,6 @@ import java.util.List;
 
 public class Main_Plantilla {
 
-    // @TODO Sistituye xxx por los parámetros de tu conexión
-
     private static final String DB_SERVER = "contabo";
 
     private static final int DB_PORT = 6033;
