@@ -27,7 +27,21 @@ public class Main {
         }
     }
 
-    private static void nuevoAutor(String authorName){
+    private static void nuevoAutor(String authorName, Connection conn){
+        try {
+            ResultSet rs = conn.createStatement().executeQuery("SELECT MAX(author_id) FROM author");
+            rs.next();
+            Long index = rs.getLong(1);
 
+            PreparedStatement stmt = conn.prepareStatement("INSERT INTO author (author_id, author_name, importance) VALUES (?, ?, 0)");
+
+            stmt.setLong(1, index + 1);
+            stmt.setString(2, authorName);
+
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
