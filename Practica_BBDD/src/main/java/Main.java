@@ -70,4 +70,24 @@ public class Main {
         return result;
     }
 
+    private static List<String> listaAfiliaciones(Connection conn) {
+        List<String> result = new ArrayList<>();
+        try{
+            PreparedStatement stmt = conn.prepareStatement("""
+            SELECT affiliation_name, COUNT(author_affiliation.author_id) AS num_authors FROM affiliation JOIN author_affiliation 
+            ON affiliation.affiliation_id = author_affiliation.affiliation_id GROUP BY affiliation_name ORDER BY num_authors DESC
+            """);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                String affiliationName = rs.getString(1);
+                int numAuthors = rs.getInt(2);
+                result.add(affiliationName + " - " + numAuthors);
+            }
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println("Cough cough cough...");
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
 }
