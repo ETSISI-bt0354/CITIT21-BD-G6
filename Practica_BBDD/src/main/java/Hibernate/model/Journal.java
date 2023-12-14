@@ -17,6 +17,7 @@ import java.util.Set;
 public class Journal {
 
     @Id
+    @GeneratedValue
     @Column(name = "journal_id")
     private Long journal_id;
 

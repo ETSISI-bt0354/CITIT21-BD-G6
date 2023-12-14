@@ -15,6 +15,7 @@ import java.util.Set;
 public class Affiliation {
 
     @Id
+    @GeneratedValue
     @Column(name = "affiliation_id", nullable = false)
     private Long affiliation_id;
 

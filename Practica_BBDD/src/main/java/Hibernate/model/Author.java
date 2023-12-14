@@ -14,6 +14,7 @@ import java.util.Set;
 @Table (name = "author")
 public class Author {
     @Id
+    @GeneratedValue
     @Column (name = "author_id")
     private Long author_id;
 

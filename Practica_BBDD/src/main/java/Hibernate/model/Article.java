@@ -16,6 +16,7 @@ import java.util.Set;
 public class Article {
 
     @Id
+    @GeneratedValue
     @Column(name = "DOI", length = 200, nullable = false)
     private String doi;
 
