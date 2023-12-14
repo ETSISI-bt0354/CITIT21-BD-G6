@@ -2,7 +2,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Main_Plantilla {
+public class JDBC_Plantilla {
 
     private static final String DB_SERVER = "contabo";
 
@@ -26,6 +26,8 @@ public class Main_Plantilla {
         nuevoAutor("Burgos I.", conn);
         nuevoAutor("Serrano M.", conn);
         nuevoAutor("Benjumea J.", conn);
+        nuevoAutor("Valecillos D.", conn);
+        nuevoAutor("García, J.", conn);
         listaArticulosPorAutor("Ortega F.", 2021, conn);
         listaAfiliaciones(conn);
 
