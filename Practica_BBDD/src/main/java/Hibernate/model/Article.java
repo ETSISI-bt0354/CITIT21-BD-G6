@@ -36,7 +36,7 @@ public class Article {
     private Journal journal;
 
     @ManyToMany()
-    @JoinTable(name = "author")
+    @JoinTable(name = "author_article")
     private Set<Author> authors;
 
     public Article() {
