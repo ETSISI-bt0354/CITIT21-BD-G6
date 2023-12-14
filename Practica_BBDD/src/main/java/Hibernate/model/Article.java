@@ -35,7 +35,8 @@ public class Article {
     @JoinColumn(name = "journal_id")
     private Journal journal;
 
-    @ManyToMany(mappedBy = "articles")
+    @ManyToMany()
+    @JoinTable(name = "author")
     private Set<Author> authors;
 
     public Article() {
