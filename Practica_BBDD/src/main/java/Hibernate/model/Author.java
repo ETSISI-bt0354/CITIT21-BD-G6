@@ -10,12 +10,17 @@ import java.util.Set;
 // enunciado de la práctica. No es necesario modificar el código de esta
 // clase, únicamente debes hacer las anotaciones que consideres
 // necesarias.
+@Entity
+@Table (name = "author")
 public class Author {
-
+    @Id
+    @Column (name = "author_id")
     private Long author_id;
 
+    @Column (name = "author_name")
     private String author_name;
 
+    @Column (name = "importance")
     private Double importance;
 
     @ManyToMany(mappedBy = "authors")
