@@ -26,10 +26,10 @@
 
         <property name="hibernate.hbm2ddl.auto">update</property>
 
-        <mapping class="model.Affiliation"/>
-        <mapping class="model.Article"/>
-        <mapping class="model.Author"/>
-        <mapping class="model.Journal"/>
+        <mapping class="Hibernate.model.Affiliation"/>
+        <mapping class="Hibernate.model.Article"/>
+        <mapping class="Hibernate.model.Author"/>
+        <mapping class="Hibernate.model.Journal"/>
 
     </session-factory>
 
