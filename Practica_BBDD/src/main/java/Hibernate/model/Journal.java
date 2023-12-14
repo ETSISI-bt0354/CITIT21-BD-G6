@@ -12,18 +12,28 @@ import java.util.Set;
 // enunciado de la práctica. No es necesario modificar el código de esta
 // clase, únicamente debes hacer las anotaciones que consideres
 // necesarias.
+@Entity
+@Table(name = "journal")
 public class Journal {
 
+    @Id
+    @Column(name = "journal_id")
+    @JoinColumn(name = "article")
     private Long journal_id;
 
+    @Column(name = "journal_name", nullable = false, length = 300)
     private String journal_name;
 
+    @Column(name = "issn", length = 40)
     private String issn;
 
+    @Column(name = "JIF")
     private Double jif;
 
+    @Column(name = "JIF_Quartile", length = 2)
     private String jif_quartile;
 
+    @OneToMany(mappedBy = "journal")
     private Set<Article> articles;
 
     public Journal() {
