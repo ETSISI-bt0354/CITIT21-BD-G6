@@ -23,10 +23,10 @@ public class Author {
     @Column (name = "importance")
     private Double importance;
 
-    @ManyToMany(mappedBy = "author")
+    @ManyToMany(mappedBy = "authors")
     private Set<Article> articles;
 
-    @ManyToMany(mappedBy = "author")
+    @ManyToMany(mappedBy = "authors")
     private Set<Affiliation> affiliations;
 
     public Author() {
