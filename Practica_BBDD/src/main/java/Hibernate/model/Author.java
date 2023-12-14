@@ -18,6 +18,7 @@ public class Author {
 
     private Double importance;
 
+    @ManyToMany(mappedBy = "authors")
     private Set<Article> articles;
 
     private Set<Affiliation> affiliations;
