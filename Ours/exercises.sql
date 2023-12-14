@@ -172,11 +172,12 @@ BEGIN
 	DECLARE done INT DEFAULT FALSE;
     DECLARE one_article INT DEFAULT TRUE;
     DECLARE title VARCHAR(240);
-    DECLARE cur CURSOR FOR SELECT article.title, COUNT(author_id) AS num
-		                   FROM article
+    DECLARE cur CURSOR FOR SELECT journal_name, COUNT(author_id) AS num
+		                   FROM journal
+		                   JOIN article ON journal.journal_id = article.journal_id
 		                   JOIN author_article ON author_article.DOI = article.DOI
                            WHERE year(publication_date) = search_year
-                           GROUP BY title, author_article.DOI
+                           GROUP BY journal_name, article.journal_id, author_article.DOI
                            HAVING num >= all(SELECT count(*)
 		                   FROM author_article
                                    WHERE author_article.DOI IN (SELECT article.DOI FROM article WHERE year(article.publication_date) = search_year)
