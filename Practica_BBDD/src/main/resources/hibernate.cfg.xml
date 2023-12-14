@@ -14,9 +14,9 @@
     <session-factory>
 
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
-        <property name="connection.url">jdbc:mysql://localhost:3306/bd2324_hibernate</property>
+        <property name="connection.url">jdbc:mysql://contabo:6033/bd2324_hibernate</property>
         <property name="connection.username">root</property>
-        <property name="connection.password"></property>
+        <property name="connection.password">4ja6E_e2bwGKuuKhZXFV</property>
 
         <property name="dialect">org.hibernate.dialect.MySQL8Dialect</property>
 

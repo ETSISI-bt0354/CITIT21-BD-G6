@@ -1,4 +1,6 @@
-package model;
+package Hibernate.model;
+
+import net.bytebuddy.implementation.bind.annotation.Default;
 
 import javax.persistence.*;
 import java.util.HashSet;

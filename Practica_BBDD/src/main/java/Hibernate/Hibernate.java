@@ -1,5 +1,7 @@
-import model.Affiliation;
-import model.Author;
+package Hibernate;
+
+import Hibernate.model.Affiliation;
+import Hibernate.model.Author;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -13,7 +15,7 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class Main {
+public class Hibernate {
 
     public static void main (String[] args) throws Exception {
         StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
