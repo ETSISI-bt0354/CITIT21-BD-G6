@@ -18,10 +18,9 @@ public class Journal {
 
     @Id
     @Column(name = "journal_id")
-    @JoinColumn(name = "article")
     private Long journal_id;
 
-    @Column(name = "journal_name", nullable = false, length = 300)
+    @Column(name = "journal_name", length = 300, nullable = false)
     private String journal_name;
 
     @Column(name = "issn", length = 40)
