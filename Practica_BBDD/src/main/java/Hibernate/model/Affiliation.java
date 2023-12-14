@@ -10,16 +10,25 @@ import java.util.Set;
 // enunciado de la práctica. No es necesario modificar el código de esta
 // clase, únicamente debes hacer las anotaciones que consideres
 // necesarias.
+@Entity
+@Table(name = "affiliation")
 public class Affiliation {
 
+    @Id
+    @Column(name = "affiliation_id", nullable = false)
     private Long affiliation_id;
 
+    @Column(name = "affiliation_name", length = 400, nullable = false)
     private String affiliation_name;
 
+    @Column(name = "city", length = 200)
     private String city;
 
+    @Column(name = "country_name", length = 200)
     private String country_name;
 
+    @ManyToMany
+    @JoinTable(name = "author_affiliation")
     private Set<Author> authors;
 
     public Affiliation() {

@@ -21,6 +21,7 @@ public class Author {
     @ManyToMany(mappedBy = "authors")
     private Set<Article> articles;
 
+    @ManyToMany(mappedBy = "authors")
     private Set<Affiliation> affiliations;
 
     public Author() {
