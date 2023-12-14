@@ -17,10 +17,10 @@ public class Author {
     @Column (name = "author_id")
     private Long author_id;
 
-    @Column (name = "author_name")
+    @Column (name = "author_name", length = 400)
     private String author_name;
 
-    @Column (name = "importance")
+    @Column (name = "importance", nullable = false)
     private Double importance;
 
     @ManyToMany(mappedBy = "authors")
