@@ -2,15 +2,13 @@ CREATE TABLE editorial(
     editorial_id INT UNIQUE NOT NULL AUTO_INCREMENT,
     nationality VARCHAR(250) NOT NULL,
     name VARCHAR(250) NOT NULL,
-    PRIMARY KEY (editorial_id),
-    KEY (nationality, name)
+    PRIMARY KEY (editorial_id)
 );
 
 CREATE TABLE investigation_area (
     investigation_area_id INT UNIQUE NOT NULL AUTO_INCREMENT,
-    name VARCHAR(250) NOT NULL,
-    PRIMARY KEY (investigation_area_id),
-    KEY (name)
+    name VARCHAR(250) UNIQUE NOT NULL,
+    PRIMARY KEY (investigation_area_id)
 );
 
 CREATE TABLE journal (
@@ -23,7 +21,6 @@ CREATE TABLE journal (
     editorial_id INT NOT NULL,
     investigation_id INT NOT NULL,
     PRIMARY KEY (journal_id),
-    KEY (issn),
     CONSTRAINT
         FOREIGN KEY (editorial_id) REFERENCES editorial(editorial_id)
         ON DELETE RESTRICT
