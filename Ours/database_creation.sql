@@ -2,7 +2,8 @@ CREATE TABLE editorial(
     editorial_id INT UNIQUE NOT NULL AUTO_INCREMENT,
     nationality VARCHAR(250) NOT NULL,
     name VARCHAR(250) NOT NULL,
-    PRIMARY KEY (editorial_id)
+    PRIMARY KEY (editorial_id),
+    CONSTRAINT UNIQUE (nationality, name)
 );
 
 CREATE TABLE investigation_area (
