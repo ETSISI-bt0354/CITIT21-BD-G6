@@ -100,7 +100,7 @@ CREATE TABLE collab_author_rel (
 );
 
 CREATE TABLE affiliation (
-    affiliation_id INT UNIQUE NOT NULL AUTO_INCREMENT,
+    affiliation_id BIGINT UNIQUE NOT NULL AUTO_INCREMENT,
     affiliation_name VARCHAR(250) NOT NULL,
     country_name VARCHAR(250) NOT NULL,
     city VARCHAR(250) NOT NULL,
