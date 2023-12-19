@@ -108,7 +108,7 @@ CREATE TABLE affiliation (
 );
 
 CREATE TABLE affiliation_author_rel (
-    affiliation_id INT NOT NULL,
+    affiliation_id BIGINT NOT NULL,
     author_id INT NOT NULL,
     PRIMARY KEY (affiliation_id, author_id),
     CONSTRAINT
@@ -128,7 +128,7 @@ CREATE TABLE workgroup (
 
 CREATE TABLE in_workgroup (
     author_id INT NOT NULL,
-    affiliation_id INT NOT NULL,
+    affiliation_id BIGINT NOT NULL,
     workgroup_id INT NOT NULL,
     PRIMARY KEY (author_id, affiliation_id, workgroup_id),
     CONSTRAINT
