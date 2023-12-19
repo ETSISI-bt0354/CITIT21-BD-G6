@@ -44,13 +44,14 @@ public class Hibernate {
         CSVParser parser = CSVParser.parse(Files.newBufferedReader(Paths.get("/home/intron014/UPM/BDWork/Practica_BBDD/src/main/resources/authors.csv")), CSVFormat.RFC4180);
         List<CSVRecord> theList = parser.getRecords();
         theList.remove(0);
+        session.beginTransaction();
         for(CSVRecord csvRecord : theList){
             String authorName = csvRecord.get(0);
             double importance = Double.parseDouble(csvRecord.get(1));
             Author author = new Author(authorName, importance);
             affiliation.getAuthors().add(author);
+            session.saveOrUpdate(author);
         }
-        session.beginTransaction();
         session.saveOrUpdate(affiliation);
         session.getTransaction().commit();
         session.close();
