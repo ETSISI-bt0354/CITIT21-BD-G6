@@ -41,9 +41,8 @@ public class Hibernate {
         // afiliación creada anteriormente. Guarda estos autores y sus afiliaciones en la base
         // de datos.
 
-        CSVParser parser = CSVParser.parse(Files.newBufferedReader(Paths.get("/home/intron014/UPM/BDWork/Practica_BBDD/src/main/resources/authors.csv")), CSVFormat.RFC4180);
+        CSVParser parser = CSVParser.parse(Files.newBufferedReader(Paths.get("/home/intron014/UPM/BDWork/Practica_BBDD/src/main/resources/authors.csv")), CSVFormat.DEFAULT.withHeader());
         List<CSVRecord> theList = parser.getRecords();
-        theList.remove(0);
         session.beginTransaction();
         for(CSVRecord csvRecord : theList){
             String authorName = csvRecord.get(0);
