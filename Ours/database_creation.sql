@@ -36,7 +36,7 @@ CREATE TABLE article (
     DOI VARCHAR(50) UNIQUE NOT NULL,
     num_citations INT NOT NULL DEFAULT 0,
     title VARCHAR(250) NOT NULL,
-    url VARCHAR(250) NOT NULL,
+    url VARCHAR(250),
     publication_date DATE,
     journal_id INT NOT NULL,
     PRIMARY KEY (DOI),
