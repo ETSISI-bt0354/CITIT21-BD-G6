@@ -166,7 +166,7 @@ HAVING COUNT(DISTINCT YEAR(article.publication_date)) = (
 # resolución del procedimiento.
 
 DELIMITER $$
-CREATE PROCEDURE journal_max_authors(IN search_year INT, OUT article_name VARCHAR(722), OUT num_author INT)
+CREATE PROCEDURE journal_max_authors(IN search_year INT, OUT j_name VARCHAR(722), OUT num_author INT)
 BEGIN
 	DECLARE done INT DEFAULT FALSE;
     DECLARE one_article INT DEFAULT TRUE;
@@ -191,16 +191,15 @@ BEGIN
 		END IF;
         
         IF one_article THEN
-			SET article_name = name;
+			SET j_name = name;
             SET one_article = FALSE;
 		ELSE
-			SET article_name = CONCAT(article_name, ';', name);
+			SET j_name = CONCAT(j_name, ';', name);
 		END IF;
 	END LOOP;
     CLOSE cur;
 END$$
 DELIMITER ;
-
 
 # m) Crear una función que, recibiendo como parámetro un identificador de una revista
 # devuelva el número medio de artículos por año que dicha revista ha publicado.
