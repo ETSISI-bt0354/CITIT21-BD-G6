@@ -257,7 +257,7 @@ CREATE TABLE reviews (
         ON DELETE RESTRICT
         ON UPDATE CASCADE
 );
-DROP TRIGGER author_does_not_review;
+
 DELIMITER $$
 CREATE TRIGGER author_does_not_review BEFORE INSERT ON reviews
 FOR EACH ROW
