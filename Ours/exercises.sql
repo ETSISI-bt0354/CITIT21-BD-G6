@@ -46,9 +46,9 @@ FROM author
 JOIN author_affiliation ON author.author_id = author_affiliation.author_id
 JOIN affiliation ON author_affiliation.affiliation_id = affiliation.affiliation_id
 WHERE affiliation.country_name = 'spain'
-AND author.author_id NOT IN (SELECT author.author_id
-	FROM author
-	JOIN author_article ON author.author_id = author_article.author_id
+AND author.author_id NOT IN (SELECT author_article.author_id
+    FROM author_article
+	-- JOIN author_article ON author.author_id = author_article.author_id
 	JOIN article ON author_article.DOI = article.DOI
 	WHERE YEAR(article.publication_date) = 2021 OR YEAR(article.publication_date) = 2020)
 ORDER BY affiliation_name, author.author_name ASC;
