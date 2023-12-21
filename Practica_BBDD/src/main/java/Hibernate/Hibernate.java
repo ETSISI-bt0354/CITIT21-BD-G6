@@ -41,7 +41,7 @@ public class Hibernate {
         // afiliación creada anteriormente. Guarda estos autores y sus afiliaciones en la base
         // de datos.
 
-        CSVParser parser = CSVParser.parse(Files.newBufferedReader(Paths.get("/home/intron014/UPM/BDWork/Practica_BBDD/src/main/resources/authors.csv")), CSVFormat.DEFAULT.withHeader());
+        CSVParser parser = CSVParser.parse(Files.newBufferedReader(Paths.get("src/main/resources/authors.csv")), CSVFormat.DEFAULT.withHeader());
         List<CSVRecord> theList = parser.getRecords();
         session.beginTransaction();
         for(CSVRecord csvRecord : theList){
@@ -49,7 +49,8 @@ public class Hibernate {
             double importance = Double.parseDouble(csvRecord.get(1));
             Author author = new Author(authorName, importance);
             affiliation.getAuthors().add(author);
-            session.saveOrUpdate(author);
+            author.getAffiliations().add(affiliation);
+            session.save(author);
         }
         session.saveOrUpdate(affiliation);
         session.getTransaction().commit();
