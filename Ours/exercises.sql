@@ -249,9 +249,13 @@ CREATE TABLE reviews (
     author_id   BIGINT         NOT NULL,
     PRIMARY KEY (DOI, author_id),
     CONSTRAINT
-        FOREIGN KEY (DOI) REFERENCES article (DOI),
+        FOREIGN KEY (DOI) REFERENCES article (DOI)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
     CONSTRAINT
         FOREIGN KEY (author_id) REFERENCES author (author_id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
 );
 DROP TRIGGER author_does_not_review;
 DELIMITER $$
