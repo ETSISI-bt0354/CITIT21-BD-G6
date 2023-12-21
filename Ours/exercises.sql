@@ -213,7 +213,7 @@ CREATE FUNCTION journal_average_article_per_year(id BIGINT)
 BEGIN
     DECLARE done INT DEFAULT FALSE;
     DECLARE num_articles, total_num_articles, years_active INT DEFAULT 0;
-    DECLARE cur CURSOR FOR SELECT COUNT(num_citations) FROM article WHERE journal_id = id GROUP BY YEAR(publication_date);
+    DECLARE cur CURSOR FOR SELECT COUNT(*) FROM article WHERE journal_id = id GROUP BY YEAR(publication_date);
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
     OPEN cur;
     read_loop: LOOP
