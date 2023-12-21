@@ -38,14 +38,20 @@ public class JDBC_Plantilla {
 
         ResultSet rs = conn.createStatement().executeQuery("SELECT MAX(author_id) FROM author");
         rs.next();
-        Long index = rs.getLong(1);
 
+        boolean colission = false;
         PreparedStatement stmt = conn.prepareStatement("INSERT INTO author (author_id, author_name, importance) VALUES (?, ?, 0)");
-        // Consultado al profesor. El índice es +1 del último
-        stmt.setLong(1, index + 1);
         stmt.setString(2, authorName);
-
-        stmt.executeUpdate();
+        while (!colission)
+        {
+            try
+            {
+                stmt.setLong(1, new Random().nextLong());
+                stmt.executeUpdate();
+                colission = true;
+            }
+            catch (SQLIntegrityConstraintViolationException ignored) {}
+        }
         stmt.close();
 
     }
