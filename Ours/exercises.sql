@@ -63,7 +63,7 @@ SELECT journal_name, issn, SUM(article.num_citations) AS total_citations
 FROM journal
 JOIN article ON journal.journal_id = article.journal_id
 WHERE journal.JIF_Quartile = 'Q1'
-GROUP BY journal_name, issn;
+GROUP BY journal.journal_id, journal_name, issn;
 
 # g) Resolver en SQL la consulta: “Obtener el nombre de la revista y el total de ci-
 # tas (num citations) que hayan recibido sus artículos para aquella/s revista/s
