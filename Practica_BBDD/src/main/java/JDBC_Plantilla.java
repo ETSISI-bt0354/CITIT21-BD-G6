@@ -23,18 +23,18 @@ public class JDBC_Plantilla {
         String url = "jdbc:mysql://" + DB_SERVER + ":" + DB_PORT + "/" + DB_NAME;
         conn = DriverManager.getConnection(url, DB_USER, DB_PASS);
 
-        nuevoAutor("Burgos I.", conn);
-        nuevoAutor("Serrano M.", conn);
-        nuevoAutor("Benjumea J.", conn);
-        nuevoAutor("Valecillos D.", conn);
-        nuevoAutor("García, J.", conn);
-        listaArticulosPorAutor("Ortega F.", 2021, conn);
-        listaAfiliaciones(conn);
+        nuevoAutor("Burgos I.");
+        nuevoAutor("Serrano M.");
+        nuevoAutor("Benjumea J.");
+        nuevoAutor("Valecillos D.");
+        nuevoAutor("García, J.");
+        listaArticulosPorAutor("Ortega F.", 2021);
+        listaAfiliaciones();
 
         conn.close();
     }
 
-    private static void nuevoAutor (String authorName, Connection conn) throws SQLException {
+    private static void nuevoAutor (String authorName) throws SQLException {
 
         ResultSet rs = conn.createStatement().executeQuery("SELECT MAX(author_id) FROM author");
         rs.next();
@@ -50,7 +50,7 @@ public class JDBC_Plantilla {
 
     }
 
-    private static void listaArticulosPorAutor (String authorName, int year, Connection conn) throws SQLException {
+    private static void listaArticulosPorAutor (String authorName, int year) throws SQLException {
         List<String> result = new ArrayList<>();
 
         PreparedStatement stmt = conn.prepareStatement("""
@@ -73,7 +73,7 @@ public class JDBC_Plantilla {
         stmt.close();
     }
 
-    private static void listaAfiliaciones(Connection conn) throws SQLException {
+    private static void listaAfiliaciones() throws SQLException {
         List<String> result = new ArrayList<>();
         PreparedStatement stmt = conn.prepareStatement("""
             SELECT affiliation_name, COUNT(author_affiliation.author_id) AS num_authors FROM affiliation 
