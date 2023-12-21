@@ -170,7 +170,7 @@ CREATE PROCEDURE journal_max_authors(IN search_year INT, OUT article_name VARCHA
 BEGIN
 	DECLARE done INT DEFAULT FALSE;
     DECLARE one_article INT DEFAULT TRUE;
-    DECLARE title VARCHAR(240);
+    DECLARE name VARCHAR(240);
     DECLARE cur CURSOR FOR SELECT journal_name, COUNT(author_id) AS num
 		                   FROM journal
 		                   JOIN article ON journal.journal_id = article.journal_id
@@ -185,16 +185,16 @@ BEGIN
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
     OPEN cur;
     read_loop: LOOP
-		FETCH cur INTO title, num_author;
+		FETCH cur INTO name, num_author;
         IF done THEN
 			LEAVE read_loop;
 		END IF;
         
         IF one_article THEN
-			SET article_name = title;
+			SET article_name = name;
             SET one_article = FALSE;
 		ELSE
-			SET article_name = CONCAT(article_name, ';', title);
+			SET article_name = CONCAT(article_name, ';', name);
 		END IF;
 	END LOOP;
     CLOSE cur;
