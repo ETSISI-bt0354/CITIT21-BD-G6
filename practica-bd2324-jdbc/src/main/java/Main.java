@@ -1,8 +1,9 @@
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-public class JDBC_Plantilla {
+public class Main {
 
     private static final String DB_SERVER = "contabo";
 
